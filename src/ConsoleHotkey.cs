@@ -3,7 +3,7 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Threading;
 
-namespace TypeCopiedText.ConsoleHotKey
+namespace ClipboardTyper.ConsoleHotKey
 {
     public static class HotKeyManager
     {

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using TypeCopiedText.ConsoleHotKey;
+using ClipboardTyper.ConsoleHotKey;
 
-namespace TypeCopiedText
+namespace ClipboardTyper
 {
     class Program
     {
@@ -14,7 +14,7 @@ namespace TypeCopiedText
         private static char[] SPECIAL_CHARS = { '{', '}', '(', ')', '+', '^', '%', '~' };
 
 
-        [STAThread]        
+        [STAThread]
         public static void Main(string[] args)
         {
             if (args?.Length > 0 && int.TryParse(args[0], out int parsedDelay))
@@ -22,11 +22,11 @@ namespace TypeCopiedText
                 DEFAULT_KEY_DELAY_MS = parsedDelay;
             }
 
-            Console.WriteLine("[+] Starting TypeCopiedText with delay [{0}ms]", DEFAULT_KEY_DELAY_MS);
+            Console.WriteLine("[+] Starting ClipboardTyper with delay [{0}ms]", DEFAULT_KEY_DELAY_MS);
 
             HotKeyManager.RegisterHotKey(Keys.P, KeyModifiers.Control | KeyModifiers.Alt | KeyModifiers.Shift);
             HotKeyManager.HotKeyPressed += new EventHandler<HotKeyEventArgs>(HotKeyManager_HotKeyPressed);
-            
+
             Console.ReadKey(true);
         }
 
@@ -39,29 +39,35 @@ namespace TypeCopiedText
 
         static void DoWork()
         {
-            if (Clipboard.ContainsText())
+            if (!Clipboard.ContainsText())
             {
-                Console.WriteLine("[*] Sleeping for 500ms");
-                Thread.Sleep(500);
+                Console.WriteLine("[-] Text not found on clipboard");
+                return;
+            }
 
-                Console.WriteLine("[+] Typing text");
-                string chars = Clipboard.GetText();
-                foreach (char c in chars)
+            Console.WriteLine("[*] Sleeping for 500ms");
+            Thread.Sleep(500);
+
+            Console.WriteLine("[+] Typing text");
+            string chars = Clipboard.GetText();
+            for (int i = 0; i < chars.Count(); i++)
+            {
+                if (i > 0)
                 {
-                    if (SPECIAL_CHARS.Contains(c))
-                    {
-                        SendKeys.SendWait("{" + c.ToString() + "}");
-                    }
-                    else
-                    {
-                        SendKeys.SendWait(c.ToString());
-                    }
-
                     Thread.Sleep(DEFAULT_KEY_DELAY_MS);
                 }
 
-                Console.WriteLine("[*] Finished typing text");
+                char c = chars[i];
+                if (SPECIAL_CHARS.Contains(c))
+                {
+                    SendKeys.SendWait("{" + c.ToString() + "}");
+                }
+                else
+                {
+                    SendKeys.SendWait(c.ToString());
+                }
             }
+            Console.WriteLine("[*] Finished typing text");
         }
     }
 }

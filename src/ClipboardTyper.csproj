@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{779260B6-9397-46DE-8FE8-BAC84AA2FE3A}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>TypeCopiedText</RootNamespace>
-    <AssemblyName>TypeCopiedText</AssemblyName>
+    <RootNamespace>ClipboardTyper</RootNamespace>
+    <AssemblyName>ClipboardTyper</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
