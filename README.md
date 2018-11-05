@@ -4,4 +4,6 @@ I got annoyed with typing passwords into console/vnc, so I made this to type tex
 
 ## Usage
 
+ClipboardText.exe <optional: key delay ms>
+
 `ctrl`+`alt`+`shift`+`p`
