@@ -5,24 +5,43 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ClipboardTyper.ConsoleHotKey;
+using CommandLine;
+using CommandLine.Text;
 
 namespace ClipboardTyper
 {
     class Program
     {
-        private static int DEFAULT_KEY_DELAY_MS = 50;
+        private static int KEY_INTERVAL_MS = 50;
+        private static int KEY_DELAY_MS = 500;
         private static char[] SPECIAL_CHARS = { '{', '}', '(', ')', '+', '^', '%', '~' };
 
+        public class Options
+        {
+            [Option("interval", Required = false, HelpText = "Sets interval between key presses")]
+            public int Interval { get; set; }
+
+            [Option("delay", Required = false, HelpText = "Sets delay before inital key press")]
+            public int Delay { get; set; }
+        }
 
         [STAThread]
         public static void Main(string[] args)
         {
-            if (args?.Length > 0 && int.TryParse(args[0], out int parsedDelay))
-            {
-                DEFAULT_KEY_DELAY_MS = parsedDelay;
-            }
+            Parser.Default.ParseArguments<Options>(args)
+                .WithParsed(o =>
+                {
+                    if (o.Interval > 0)
+                    {
+                        KEY_INTERVAL_MS = o.Interval;
+                    }
+                    if (o.Delay > 0)
+                    {
+                        KEY_DELAY_MS = o.Delay;
+                    }
+                });
 
-            Console.WriteLine("[+] Starting ClipboardTyper with delay [{0}ms]", DEFAULT_KEY_DELAY_MS);
+            Console.WriteLine("[+] Starting ClipboardTyper with interval [{0}ms] and delay [{1}ms]", KEY_INTERVAL_MS, KEY_DELAY_MS);
 
             HotKeyManager.RegisterHotKey(Keys.P, KeyModifiers.Control | KeyModifiers.Alt | KeyModifiers.Shift);
             HotKeyManager.HotKeyPressed += new EventHandler<HotKeyEventArgs>(HotKeyManager_HotKeyPressed);
@@ -45,8 +64,11 @@ namespace ClipboardTyper
                 return;
             }
 
-            Console.WriteLine("[*] Sleeping for 500ms");
-            Thread.Sleep(500);
+            if (KEY_DELAY_MS > 0)
+            {
+                Console.WriteLine("[*] Delaying typing for [{0}]ms", KEY_DELAY_MS);
+                Thread.Sleep(KEY_DELAY_MS);
+            }
 
             Console.WriteLine("[+] Typing text");
             string chars = Clipboard.GetText();
@@ -54,7 +76,7 @@ namespace ClipboardTyper
             {
                 if (i > 0)
                 {
-                    Thread.Sleep(DEFAULT_KEY_DELAY_MS);
+                    Thread.Sleep(KEY_INTERVAL_MS);
                 }
 
                 char c = chars[i];
