@@ -66,7 +66,7 @@ namespace ClipboardTyper
 
             if (KEY_DELAY_MS > 0)
             {
-                Console.WriteLine("[*] Delaying typing for [{0}]ms", KEY_DELAY_MS);
+                Console.WriteLine("[*] Delaying typing for [{0}ms]", KEY_DELAY_MS);
                 Thread.Sleep(KEY_DELAY_MS);
             }
 
